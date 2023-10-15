@@ -27,11 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -178,4 +174,31 @@ class GuestbookController {
 
 		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
+
+
+	/**
+	 * Handles AJAX requests to increment {@link GuestbookEntry}s like count.
+	 *
+	 * @param entry an {@link Optional} with the {@link GuestbookEntry} to increment
+	 * @return a response entity indicating success or failure of the increment
+	 * @throws ResponseStatusException
+	 */
+	@HxRequest
+	@PatchMapping(path = "/guestbook/{entry}")
+	HtmxResponse addLikeHtmx(@PathVariable Optional<GuestbookEntry> entry, Model model) {
+		return entry.map(it -> {
+			if(it.getLikes() < Integer.MAX_VALUE){
+				it.incrementLikes();
+				guestbook.save(it);
+			};
+
+
+			model.addAttribute("entries", guestbook.findAll());
+
+			return new HtmxResponse()
+					.addTemplate("guestbook :: entries");
+
+		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	}
+
 }

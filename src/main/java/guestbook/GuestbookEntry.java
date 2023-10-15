@@ -36,6 +36,7 @@ class GuestbookEntry {
 	private @Id @GeneratedValue Long id;
 	private final String name, text, email;
 	private final LocalDateTime date;
+	private int likes;
 	/**
 	 * Creates a new {@link GuestbookEntry} for the given name and text.
 	 *
@@ -53,6 +54,7 @@ class GuestbookEntry {
 		this.name = name;
 		this.text = text;
 		this.date = LocalDateTime.now();
+		this.likes = 0;
 	}
 
 	@SuppressWarnings("unused")
@@ -61,6 +63,7 @@ class GuestbookEntry {
 		this.text = null;
 		this.date = null;
 		this.email = null;
+		this.likes = 0;
 	}
 
 	public String getName() {
@@ -80,4 +83,12 @@ class GuestbookEntry {
 	}
 
 	public String getEmail(){return email;}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void incrementLikes() {
+		this.likes += 1;
+	}
 }
